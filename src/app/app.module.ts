@@ -5,11 +5,13 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { UserInputComponent } from './user-input/user-input.component';
 import { FormsModule } from '@angular/forms';
+import { PuzzleGridComponent } from './puzzle-grid/puzzle-grid.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserInputComponent
+    UserInputComponent,
+    PuzzleGridComponent
   ],
   imports: [
     BrowserModule,

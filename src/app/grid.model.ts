@@ -1,9 +1,9 @@
 
 export class Grid {
-    public gridSize: string;
+    public gridSize: number;
     public wordList: string[];
 
-    constructor(gridSize: string, wordList: string[]) {
+    constructor(gridSize: number, wordList: string[]) {
         this.gridSize = gridSize;
         this.wordList = wordList;
     }

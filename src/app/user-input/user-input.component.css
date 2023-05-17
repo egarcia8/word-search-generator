@@ -1,3 +1,62 @@
 button {
     margin-right: 10px;
 }
+
+@media (min-width: 768px) {
+    html {
+      font-size: 16px;
+      
+    }
+  }
+  
+  html {
+      position: relative;
+      min-height: 100%;
+      font-size: 16px;
+  }
+  
+  body {
+    margin-bottom: 60px;
+  }
+  
+  #gridSize {
+      max-width: 768px;
+  }
+
+#grid {
+    white-space: nowrap;
+}
+
+td {
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+    padding-top: 10px;
+    color: blue;
+    text-align: center;
+    display: inline-block;
+    white-space: nowrap;
+}
+#fitWordList {
+    color: blue;
+}
+
+#noFitWordList {
+    color: crimson;
+}
+
+
+/* p {
+    padding-left: 5px;
+    padding-bottom: 1px;
+    font-weight: 600;
+    color: crimson;
+    margin-bottom: 5px;
+    position: relative;
+} */
+
+/* input.ng-invalid.ng-touched {
+    border: 1px solid red;
+    color: red;
+  }
+   */

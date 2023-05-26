@@ -5,7 +5,7 @@
             <div class="form-group mt-3 form-outline w-25">
                 <label for="gridSize">Size of Grid:</label>
                 <input 
-                    type="number" 
+                    type="text" 
                     id="gridSize"    
                     class="form-control" 
                     placeholder="Enter number"
@@ -13,7 +13,8 @@
                     name="gridSize"
                     required
                     #gridSize="ngModel"
-                    [readonly]="wordList.length >= 1">
+                    [readonly]="wordList.length >= 1"
+                    >
                 
                 <span  
                 class="help block" 
@@ -39,6 +40,7 @@
                 required
                 #userWord="ngModel"
                 [maxLength]="gridSize.value"
+                
                 >
             
                 <span 
@@ -53,7 +55,7 @@
                     type="button"
                     class="btn btn-outline-success mt-3 mb-3" 
                     (click)="onAddWord()"
-                    [disabled]="userWord.invalid || gridSize.invalid">Add Word to List</button>
+                    [disabled]="userWord.invalid || (gridSize.value > 20 || gridSize.value < 5)">Add Word to List</button>
             </div>
         </div>
         <div class="row">
@@ -77,7 +79,7 @@
                 <button 
                 type="button" 
                 class="btn btn-primary" 
-                [disabled]="gridSize.invalid || wordList.length === 0"
+                [disabled]="(gridSize.value > 20 || gridSize.value < 5) || wordList.length === 0"
                 (click)="onCreateGrid()">Submit</button>
                 <button type="button" (click)="onClearEntry()" class="btn btn-outline-dark">Clear</button>
             </div>
@@ -110,4 +112,6 @@
             <button type="button" class="btn btn-outline-success" (click)="onClearGrid()">Create New Puzzle</button>
         </div>
 </div>  
+
+
 

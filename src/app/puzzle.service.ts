@@ -3,31 +3,30 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { WordService } from './word.service';
 
-import { Grid } from './grid.model';
-import { Direction } from './direction.model';
+import Grid from './grid.model';
+import DIRECTION from './direction.model';
 
 @Injectable()
 export class PuzzleService {
-  wordAdded = new Subject<string[]>();
-  gridAdded = new Subject<string[][]>();
-  listAdded = new Subject<string[]>();
-  noFitAdded = new Subject<string[]>();
-  shuffledWordsAdded = new Subject<string[]>();
+  private grid: Grid;
 
-  private wordList: string[] = [];
-  private masterCoordinates: string[][] = [];
-  private insertedList: string[] = [];
-  private noFitList: string[] = [];
-  private shuffledWords: string[] = [];
+  masterGrid = new Subject<string[][]>();
+  wordsUsedList = new Subject<string[]>();
+  wordsNoFitList = new Subject<string[]>();
 
   constructor(private wordService: WordService) {}
 
-  addWord(word: string) {
-    this.wordList.push(word);
-    this.wordAdded.next(this.wordList);
+  setGrid(gridSize: number, wordList: string[]) {
+    this.grid = new Grid(gridSize, wordList);
   }
 
-  makeArray(gridSize: number, val: string, wordList: string[]) {
+  makeArray() {
+    if (this.grid == null) throw 'Grid can not be null';
+    let shuffledWords = [];
+    let masterCoordinates: string[][] = [];
+    let insertedList: string[] = [];
+    let noFitList: string[] = [];
+
     //Setup catalog of Master Coordinates
     let catalogMasterCoordinates: number[][] = [];
 
@@ -35,14 +34,14 @@ export class PuzzleService {
 
     //create grid where size is determined by user
     let arr = [];
-    for (let x = 0; x < gridSize; x++) {
+    for (let x = 0; x < this.grid.gridSize; x++) {
       arr[x] = [];
-      for (let y = 0; y < gridSize; y++) {
-        arr[x][y] = val;
+      for (let y = 0; y < this.grid.gridSize; y++) {
+        arr[x][y] = '_';
         catalogMasterCoordinates.push([x, y]);
       }
     }
-    this.masterCoordinates = arr;
+    masterCoordinates = arr;
 
     //Shuffle words in word list
     const shuffle = ([...array]) => {
@@ -53,15 +52,12 @@ export class PuzzleService {
       }
       return array;
     };
-    // const shuffle = (array)  => {
-    //     array.sort(() => Math.random() -0.5);
-    //     return array;
-    // }
-    this.shuffledWords = shuffle(wordList);
-    this.insertedList = [];
-    this.noFitList = [];
+
+    shuffledWords = shuffle(this.grid.wordList);
+    insertedList = [];
+    noFitList = [];
     //Loop through each word
-    for (let word of this.shuffledWords) {
+    for (let word of shuffledWords) {
       //Shuffle coordinates to loop through
       let shuffledListOfCoordinates: number[] = shuffle(
         catalogMasterCoordinates
@@ -77,9 +73,9 @@ export class PuzzleService {
         //let directions = new Direction();
         //let shuffledListOfDirections = shuffle(directions);
         let shuffledListOfDirections = shuffle([
-          [1, 0],
-          [0, 1],
-          [1, 1],
+          DIRECTION.Horizontal,
+          DIRECTION.Vertical,
+          DIRECTION.Diagonal,
         ]);
 
         //Go through each direction and check if a word will fit
@@ -88,26 +84,26 @@ export class PuzzleService {
           let willFit = this.wordService.CheckWillFit(
             word,
             coordinate,
-            this.masterCoordinates,
+            masterCoordinates,
             direction,
-            gridSize
+            this.grid.gridSize
           );
           if (willFit) {
             this.wordService.InsertWord(
               word,
               coordinate,
-              this.masterCoordinates,
+              masterCoordinates,
               direction
             );
             wordInserted = true;
-            this.insertedList.push(word);
+            insertedList.push(word);
             break;
           }
         }
 
         //If all of the coordinates have been looped through the word does not fit
         if (shuffledListOfCoordinates.length - 1 === i) {
-          this.noFitList.push(word);
+          noFitList.push(word);
         }
       }
     }
@@ -118,26 +114,26 @@ export class PuzzleService {
 
       return alphabet[Math.floor(Math.random() * alphabet.length)];
     }
-    for (let x = 0; x < this.masterCoordinates.length; x++) {
-      for (let y = 0; y < this.masterCoordinates[0].length; y++) {
-        let value = this.masterCoordinates[x][y];
+    for (let x = 0; x < masterCoordinates.length; x++) {
+      for (let y = 0; y < masterCoordinates[0].length; y++) {
+        let value = masterCoordinates[x][y];
         if (value === '_') {
-          this.masterCoordinates[x][y] = generateRandomLetter();
+          masterCoordinates[x][y] = generateRandomLetter();
         }
       }
     }
 
     let tempList: string[][] = [];
-    for (let x = 0; x < this.masterCoordinates.length; x++) {
+    for (let x = 0; x < masterCoordinates.length; x++) {
       let yList: string[] = [];
-      for (let y = 0; y < this.masterCoordinates[0].length + 1; y++) {
-        yList.push(this.masterCoordinates[x][y]);
+      for (let y = 0; y < masterCoordinates[0].length + 1; y++) {
+        yList.push(masterCoordinates[x][y]);
       }
       tempList.push(yList);
     }
-    this.gridAdded.next(this.masterCoordinates);
-    this.listAdded.next(this.insertedList);
-    this.noFitAdded.next(this.noFitList);
-    this.shuffledWordsAdded.next(this.shuffledWords);
+
+    this.masterGrid.next(masterCoordinates);
+    this.wordsUsedList.next(insertedList);
+    this.wordsNoFitList.next(noFitList);
   }
 }

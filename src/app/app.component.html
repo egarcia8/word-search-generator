@@ -2,7 +2,12 @@
   <div class="row">
     <div class="col-sm-12">
       <h2 class="text-center">Word Search Generator</h2>
-      <app-user-input></app-user-input>
+      <div *ngIf="!isPuzzleReady">
+        <app-user-input [(isPuzzleReady)]="isPuzzleReady"></app-user-input>
+      </div>
+      <div *ngIf="isPuzzleReady">
+        <app-puzzle-grid [(isPuzzleReady)]="isPuzzleReady"></app-puzzle-grid>
+      </div>
     </div>
   </div>
 </div>

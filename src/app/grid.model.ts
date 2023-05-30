@@ -1,10 +1,9 @@
+export default class Grid {
+  public gridSize: number;
+  public wordList: string[];
 
-export class Grid {
-    public gridSize: number;
-    public wordList: string[];
-
-    constructor(gridSize: number, wordList: string[]) {
-        this.gridSize = gridSize;
-        this.wordList = wordList;
-    }
+  constructor(gridSize: number, wordList: string[]) {
+    this.gridSize = gridSize;
+    this.wordList = wordList;
+  }
 }

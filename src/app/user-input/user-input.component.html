@@ -1,117 +1,147 @@
-<div class="container" *ngIf="!puzzleReady">
-    <h5 class="mt-3">Complete the form below to create your own word search.</h5>
-    <form  #f="ngForm">
+<div class="container">
+  <h5 class="mt-3">Complete the form below to create your own word search.</h5>
+  <form #f="ngForm">
+    <div class="row">
+      <div class="form-group mt-3 form-outline w-25">
+        <label for="gridSizeInput">Size of Grid:</label>
+        <input
+          type="text"
+          id="gridSizeInput"
+          class="form-control"
+          placeholder="Enter number"
+          ngModel
+          name="gridSizeInput"
+          required
+          #gridSizeInput="ngModel"
+          [readonly]="wordList.length >= 1"
+        />
+
+        <span
+          class="help block"
+          style="color: red"
+          *ngIf="
+            gridSizeInput.value > 20 ||
+            (gridSizeInput.value < 5 && gridSizeInput.touched)
+          "
+        >
+          <p>Please enter a number from 5-20.</p></span
+        >
+        <span
+          class="help block"
+          style="color: red"
+          *ngIf="gridSizeInput.invalid && userWordInput.valid"
+          >Please enter a the size.</span
+        >
+        <span class="help-block">
+          <p>
+            Please enter the size of your grid using numbers 5-20 (e.g. 5=5x5
+            grid, 10=10x10 grid, etc.)
+          </p></span
+        >
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="form-group mt-3 form-outline w-25">
+        <label for="userWordInput">Word for Word List:</label>
+        <input
+          type="text"
+          id="userWordInput"
+          class="form-control"
+          placeholder="Enter word"
+          ngModel
+          name="userWordInput"
+          required
+          #userWordInput="ngModel"
+          [maxLength]="gridSizeInput.value"
+        />
+
+        <span
+          class="help block"
+          style="color: red"
+          *ngIf="
+            userWordInput.dirty &&
+            userWordInput.value.length === 0 &&
+            wordList.length === 0
+          "
+        >
+          <p>Please enter a word</p>
+        </span>
+        <span
+          class="help block"
+          style="color: red"
+          *ngIf="
+            userWordInput.dirty &&
+            userWordInput.value.length == gridSizeInput.value
+          "
+        >
+          The word must be shorter than the size of the grid.
+        </span>
+
+        <span class="help-block">
+          <p>
+            Please enter a word for your list that does not exceed the length of
+            your grid.
+          </p>
+        </span>
+
+        <button
+          type="button"
+          class="btn btn-outline-success mt-3 mb-3"
+          (click)="onAddWord()"
+          [disabled]="
+            userWordInput.invalid ||
+            gridSizeInput.value > 20 ||
+            gridSizeInput.value < 5
+          "
+        >
+          Add Word to List
+        </button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="mt-3 form-outline w-25">
+        <span for="wordList"><b>Word List:</b></span>
         <div class="row">
-            <div class="form-group mt-3 form-outline w-25">
-                <label for="gridSize">Size of Grid:</label>
-                <input 
-                    type="text" 
-                    id="gridSize"    
-                    class="form-control" 
-                    placeholder="Enter number"
-                    ngModel
-                    name="gridSize"
-                    required
-                    #gridSize="ngModel"
-                    [readonly]="wordList.length >= 1"
-                    >
-                
-                <span  
-                class="help block" 
-                style="color: red;" 
-                *ngIf="gridSize.value > 20 || gridSize.value < 5 && gridSize.touched">
-                <p>Please enter a number from 5-20.</p></span>   
-                <span class="help block" style="color: red;" *ngIf="gridSize.invalid && userWord.valid">Please enter a the size.</span> 
-                <span class="help-block">
-                <p>Please enter the size of your grid using numbers 5-20 (e.g. 5=5x5 grid, 10=10x10 grid, etc.)</p></span>
-            </div>
-        </div>
-        
-        <div class="row">
-            <div class="form-group mt-3 form-outline w-25">
-                <label for="userWord">Word for Word List:</label>
-                <input
-                type="text" 
-                id="userWord"    
-                class="form-control" 
-                placeholder="Enter word"
-                ngModel
-                name="userWord"
-                required
-                #userWord="ngModel"
-                [maxLength]="gridSize.value"
-                
+          <ul class="col-sm list-unstyled">
+            <ng-container *ngFor="let word of wordList; let i = index">
+              <li>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm mx-2 my-1"
+                  (click)="wordList.splice(i, 1)"
                 >
-            
-                <span 
-                class="help block" 
-                [ngStyle]="{'color' :userWord.touched ? 'red' : 'black'}" 
-                *ngIf="this.wordList.length === 0">
-                <p>Please enter a word</p></span>
-                <span class="help block" style="color: red;" *ngIf="userWord.dirty && (userWord.value.length == gridSize.value)">The word must be shorter than the size of the grid.</span>
-
-                <span class="help-block"><p>Please enter a word for your list that does not exceed the length of your grid.</p></span>
-                <button 
-                    type="button"
-                    class="btn btn-outline-success mt-3 mb-3" 
-                    (click)="onAddWord()"
-                    [disabled]="userWord.invalid || (gridSize.value > 20 || gridSize.value < 5)">Add Word to List</button>
-            </div>
+                  X
+                </button>
+                <span>{{ word }}</span>
+              </li>
+            </ng-container>
+          </ul>
         </div>
-        <div class="row">
-            <div class="mt-3 form-outline w-25">
-                <label for="wordList"><b>Word List:</b></label>
-                <div class="row">
-                    <ul class="col-sm list-unstyled">
-                        <ng-container *ngFor="let word of wordList, let i = index">
-                           <li><button type="button" class="btn btn-outline-danger btn-sm mx-2 my-1" (click)="wordList.splice(i, 1)">X</button>
-                            <span>{{word}}</span>
-                           </li>
-
-                        </ng-container>
-                       
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="text-center col-xs-2 mt-5">
-                <button 
-                type="button" 
-                class="btn btn-primary" 
-                [disabled]="(gridSize.value > 20 || gridSize.value < 5) || wordList.length === 0"
-                (click)="onCreateGrid()">Submit</button>
-                <button type="button" (click)="onClearEntry()" class="btn btn-outline-dark">Clear</button>
-            </div>
-        </div>
-    </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="text-center col-xs-2 mt-5">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="
+            gridSizeInput.value > 20 ||
+            gridSizeInput.value < 5 ||
+            wordList.length === 0
+          "
+          (click)="onCreateGrid()"
+        >
+          Submit
+        </button>
+        <button
+          type="button"
+          (click)="onClearEntry()"
+          class="btn btn-outline-dark"
+        >
+          Clear
+        </button>
+      </div>
+    </div>
+  </form>
 </div>
-<div class="row mt-3 justify-content-md-center">
-    <table class="col-lg-auto" id="grid">
-        <tr *ngFor="let row of masterCoordinates; let i = index">
-            <td *ngFor="let col of row">{{col | uppercase}}</td>
-        </tr>
-    </table>
-</div>
-<div class="row mt-3 text-center" *ngIf="puzzleReady">
-   <h5>Word List</h5>
-   <ul class="list-unstyled" id="fitWordList">
-        <li *ngFor="let word of insertedList">{{ word | uppercase }}</li>
-   </ul>
-</div>
-<div class="row mt-3 text-center" *ngIf="puzzleReady && noFitList.length !=0">
-    <h5>These words did not fit in your grid:</h5>
-    <ul class="list-unstyled" id="noFitWordList">
-        <li *ngFor="let word of noFitList">{{ word | uppercase }}</li>
-    </ul>
- </div>
- 
-<div class="row" *ngIf="puzzleReady">
-        <div class="text-center col-xs-2 mt-5">
-            <button type="button" class="btn btn-outline-primary" (click)="onRebuildGrid()">Rebuild Puzzle</button>
-            <button type="button" class="btn btn-outline-success" (click)="onClearGrid()">Create New Puzzle</button>
-        </div>
-</div>  
-
-
-

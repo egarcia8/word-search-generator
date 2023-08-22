@@ -30,9 +30,7 @@ export class PuzzleService {
     //Setup catalog of Master Coordinates
     let catalogMasterCoordinates: number[][] = [];
 
-    //let coordinate: number[] = [];
-
-    //create grid where size is determined by user
+    //create multidimensional array where size is determined by user
     let arr = [];
     for (let x = 0; x < this.grid.gridSize; x++) {
       arr[x] = [];
@@ -43,12 +41,13 @@ export class PuzzleService {
     }
     masterCoordinates = arr;
 
-    //Shuffle words in word list
+    //Shuffle words in word list using the Fisher-Yates Shuffle
     const shuffle = ([...array]) => {
-      let m = array.length;
-      while (m) {
-        const i = Math.floor(Math.random() * m--);
-        [array[m], array[i]] = [array[i], array[m]];
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        const temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
       }
       return array;
     };

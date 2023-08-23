@@ -26,9 +26,10 @@ export class UserInputComponent {
 
   onAddWord() {
     const tempValue = this.inputForm.value.userWordInput;
+    const cleanValue = tempValue.replace(/\s/g, '');
 
-    if (tempValue) {
-      this.wordList.push(tempValue);
+    if (cleanValue) {
+      this.wordList.push(cleanValue);
       this.inputForm.form.patchValue({
         userWordInput: '',
       });
@@ -57,6 +58,16 @@ export class UserInputComponent {
     if (gridSize && this.wordList.length > 0) {
       this.puzzleService.setGrid(gridSize, this.wordList);
       this.isPuzzleReadyChange.emit(true);
+    }
+  }
+
+  handleKeyUp(e) {
+    if (e.keyCode == 13) {
+      const gridSize = this.inputForm.value.gridSizeInput;
+      const wordLength = this.inputForm.value.userWordInput.length;
+      if (gridSize > wordLength) {
+        this.onAddWord();
+      }
     }
   }
 }

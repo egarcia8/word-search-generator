@@ -29,7 +29,7 @@
           class="help block"
           style="color: red"
           *ngIf="gridSizeInput.invalid && userWordInput.valid"
-          >Please enter a the size.</span
+          >Please enter the size of the grid.</span
         >
         <span class="help-block">
           <p>
@@ -51,6 +51,8 @@
           ngModel
           name="userWordInput"
           required
+          ng-trim="true"
+          (keyup)="handleKeyUp($event)"
           #userWordInput="ngModel"
           [maxLength]="gridSizeInput.value"
         />
